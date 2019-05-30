@@ -18,6 +18,7 @@ package org.docksidestage.javatry.colorbox;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.docksidestage.bizfw.colorbox.ColorBox;
 import org.docksidestage.bizfw.colorbox.space.BoxSpace;
@@ -166,6 +167,25 @@ public class Step12StreamStringTest extends PlainTestCase {
      * ("Water" で始まる文字列をしまっているカラーボックスの色は？)
      */
     public void test_startsWith_findFirstWord() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        String answer = colorBoxList.stream()
+                .filter(colorBox -> isStartWithWater(colorBox))
+                .map(colorBox -> colorBox.getColor().getColorName())
+                .collect(Collectors.joining());
+
+        System.out.println("+++++++++Answer+++++++++");
+        System.out.println(answer);
+
+    }
+    private boolean isStartWithWater(ColorBox colorBox) {
+        for (BoxSpace boxSpace : colorBox.getSpaceList()) {
+            if (boxSpace.getContent() instanceof  String) {
+                if (boxSpace.getContent().toString().startsWith("Water")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -173,6 +193,25 @@ public class Step12StreamStringTest extends PlainTestCase {
      * ("front" で終わる文字列をしまっているカラーボックスの色は？)
      */
     public void test_endsWith_findLastWord() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        String answer = colorBoxList.stream()
+                .filter(colorBox -> isEndsWithfromt(colorBox))
+                .map(colorBox -> colorBox.getColor().getColorName())
+                .collect(Collectors.joining());
+
+        System.out.println("+++++++++Answer+++++++++");
+        System.out.println(answer);
+
+    }
+    private boolean isEndsWithfromt(ColorBox colorBox) {
+        for (BoxSpace boxSpace : colorBox.getSpaceList()) {
+            if (boxSpace.getContent() instanceof  String) {
+                if (boxSpace.getContent().toString().endsWith("front")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     // ===================================================================================
