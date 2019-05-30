@@ -19,6 +19,7 @@ import static org.docksidestage.bizfw.colorbox.yours.YourPrivateRoom.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import javax.lang.model.type.NullType;
 
@@ -396,7 +397,7 @@ public class Step11ClassicStringTest extends PlainTestCase {
                             devilText = ((DevilBox) tmpContent).getText();
                         }
                     }catch (DevilBoxTextNotFoundException ignored){
-                        
+
                     }
                     if (!devilText.equals("")){
                         sumTextLength += devilText.length();
@@ -438,6 +439,22 @@ public class Step11ClassicStringTest extends PlainTestCase {
      */
     public void test_showMap_flat() {
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        List<String> keys = null;
+        for (ColorBox colorBox : colorBoxList) {
+            List<BoxSpace> spaceList = colorBox.getSpaceList();
+            for (BoxSpace boxSpace : spaceList) {
+                if (boxSpace.getContent() instanceof java.util.Map) {
+//                    ((Map) boxSpace.getContent()).keySet().forEach(key -> keys.add(key));
+                    for (Object key : ((Map) boxSpace.getContent()).keySet()) {
+                        keys.add(key.toString());
+                    }
+                    for (String key : keys) {
+                        System.out.println(key + ":" + ((Map) boxSpace.getContent()).get(key));
+                    }
+                }
+            }
+        }
+        System.out.println("+++++++++Answer+++++++++");
     }
 
     /**
@@ -446,6 +463,7 @@ public class Step11ClassicStringTest extends PlainTestCase {
      */
     public void test_showMap_nested() {
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        // TODO yuki.komatsu  (2019-05-30)
     }
 
     // ===================================================================================
@@ -457,6 +475,7 @@ public class Step11ClassicStringTest extends PlainTestCase {
      */
     public void test_parseMap_flat() {
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        // TODO yuki.komatsu  (2019-05-30)
     }
 
     /**
@@ -465,5 +484,6 @@ public class Step11ClassicStringTest extends PlainTestCase {
      */
     public void test_parseMap_nested() {
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        // TODO yuki.komatsu  (2019-05-30)
     }
 }
