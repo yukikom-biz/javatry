@@ -98,13 +98,6 @@ public class Step12StreamStringTest extends PlainTestCase {
      */
     public void test_length_findSecondMax() {
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
-        //        String answer = colorBoxList.stream()
-        //                .map(colorBox -> colorBox.getSpaceList())
-        //                .map(boxSpaces -> boxSpaces.toString())
-        //                .sorted()
-        //                .skip(1)
-        //                .findFirst()
-        //                .toString();
 
         String maxStr = colorBoxList.stream()
                 .map(colorBox -> colorBox.getSpaceList())
