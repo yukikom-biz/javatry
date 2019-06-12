@@ -23,7 +23,7 @@ import org.docksidestage.unit.PlainTestCase;
  * @author jflute
  * @author your_name_here
  */
-public class Step13NumberTest extends PlainTestCase {
+public class  Step13NumberTest extends PlainTestCase {
 
     // ===================================================================================
     //                                                                               Basic

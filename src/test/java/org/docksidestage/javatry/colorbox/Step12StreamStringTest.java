@@ -17,8 +17,8 @@ package org.docksidestage.javatry.colorbox;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.docksidestage.bizfw.colorbox.ColorBox;
 import org.docksidestage.bizfw.colorbox.space.BoxSpace;
@@ -100,14 +100,18 @@ public class Step12StreamStringTest extends PlainTestCase {
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
 
         String maxStr = colorBoxList.stream()
-                .map(colorBox -> colorBox.getSpaceList())
-                .map(cont -> cont.toString())
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .map(boxSpace -> boxSpace.getContent())
+                .filter(c -> c != null)
+                .map(c -> c.toString())
                 .max(Comparator.comparingInt(String::length))
                 .orElse(null);
 
         String answer = colorBoxList.stream()
-                .map(colorBox -> colorBox.getSpaceList())
-                .map(cont -> cont.toString())
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .map(boxSpace -> boxSpace.getContent())
+                .filter(c -> c != null)
+                .map(c -> c.toString())
                 .filter(str -> !str.equals(maxStr))
                 .max(Comparator.comparingInt(String::length))
                 .orElse(null);
@@ -140,15 +144,27 @@ public class Step12StreamStringTest extends PlainTestCase {
      * (カラーボックスの中で、色の名前が一番長いものは？)
      */
     public void test_length_findMaxColorSize() {
+        //        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        //        String answer = colorBoxList.stream()
+        //                .map(colorBox -> colorBox.getColor().getColorName().toString())
+        //                .max(Comparator.comparingInt(String::length))
+        //                .orElse(null);
+        //
+        //        System.out.println("+++++++++Answer+++++++++");
+        //        System.out.println(answer);
+
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
-        String answer = colorBoxList.stream()
+        Optional<String> optMax = colorBoxList.stream()
                 .map(colorBox -> colorBox.getColor().getColorName().toString())
-                .max(Comparator.comparingInt(String::length))
-                .orElse(null);
+                .max(Comparator.comparingInt(String::length));
 
-        System.out.println("+++++++++Answer+++++++++");
-        System.out.println(answer);
-
+        if (optMax.isPresent()) {
+            String answer = optMax.get();
+            System.out.println("+++++++++Answer+++++++++");
+            System.out.println(answer);
+        } else {
+            System.out.println("nothing");
+        }
 
     }
 
@@ -172,7 +188,7 @@ public class Step12StreamStringTest extends PlainTestCase {
     }
     private boolean isStartWithWater(ColorBox colorBox) {
         for (BoxSpace boxSpace : colorBox.getSpaceList()) {
-            if (boxSpace.getContent() instanceof  String) {
+            if (boxSpace.getContent() instanceof String) {
                 if (boxSpace.getContent().toString().startsWith("Water")) {
                     return true;
                 }
@@ -198,7 +214,7 @@ public class Step12StreamStringTest extends PlainTestCase {
     }
     private boolean isEndsWithfromt(ColorBox colorBox) {
         for (BoxSpace boxSpace : colorBox.getSpaceList()) {
-            if (boxSpace.getContent() instanceof  String) {
+            if (boxSpace.getContent() instanceof String) {
                 if (boxSpace.getContent().toString().endsWith("front")) {
                     return true;
                 }
@@ -215,6 +231,21 @@ public class Step12StreamStringTest extends PlainTestCase {
      * (カラーボックスに入ってる "front" で終わる文字列で、最初の "front" は何文字目から始まる？)
      */
     public void test_indexOf_findIndex() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        Optional<BoxSpace> optAnswer = colorBoxList.stream()
+                .filter(colorBox -> isEndsWithfromt(colorBox))
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .filter(cont -> cont.getContent().toString().endsWith("front"))
+                .findAny();
+
+        if (optAnswer.isPresent()) {
+            String answer = optAnswer.get().getContent().toString();
+            int indexOfFront = answer.indexOf("f");
+            System.out.println("+++++++++Answer+++++++++");
+            System.out.println(answer + " : " + indexOfFront);
+        } else {
+            System.out.println("Error");
+        }
     }
 
     /**
@@ -222,7 +253,36 @@ public class Step12StreamStringTest extends PlainTestCase {
      * (カラーボックスに入ってる「ど」を二つ以上含む文字列で、最後の「ど」は何文字目から始まる？ (e.g. "どんどん" => 3))
      */
     public void test_lastIndexOf_findIndex() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        char tar = 'ど';
+        Optional<Integer> optAnswer = colorBoxList.stream()
+                .filter(colorBox -> isContainCharTwice(colorBox, tar))
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .map(boxSpace -> boxSpace.getContent().toString().lastIndexOf(tar))
+                .findAny();
+
+        optAnswer.ifPresent(answer -> System.out.println("The answer is ... " + answer));
+        optAnswer.orElseThrow();
+//        optAnswer.orElseGet();
+
     }
+    private boolean isContainCharTwice(ColorBox colorBox, char target) {
+            int firstTarget;
+            int secondTarget;
+        List<BoxSpace> spaceList = colorBox.getSpaceList();
+        for (BoxSpace boxSpace : spaceList) {
+            if (boxSpace.getContent() instanceof String) {
+                firstTarget = boxSpace.getContent().toString().indexOf(target);
+                secondTarget = boxSpace.getContent().toString().lastIndexOf(target);
+                if (secondTarget - firstTarget > 0){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
 
     // ===================================================================================
     //                                                                         substring()
@@ -232,6 +292,21 @@ public class Step12StreamStringTest extends PlainTestCase {
      * (カラーボックスに入ってる "front" で終わる文字列の最初の一文字は？)
      */
     public void test_substring_findFirstChar() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        Optional<BoxSpace> optAnswer = colorBoxList.stream()
+                .filter(colorBox -> isEndsWithfromt(colorBox))
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .filter(cont -> cont.getContent().toString().endsWith("front"))
+                .findAny();
+
+        if (optAnswer.isPresent()) {
+            String answer = optAnswer.get().getContent().toString();
+            char substringFirstChar = answer.charAt(0);
+            System.out.println("+++++++++Answer+++++++++");
+            System.out.println(answer + " : " + substringFirstChar);
+        } else {
+            System.out.println("Error");
+        }
     }
 
     /**
@@ -239,6 +314,22 @@ public class Step12StreamStringTest extends PlainTestCase {
      * (カラーボックスに入ってる "Water" で始まる文字列の最後の一文字は？)
      */
     public void test_substring_findLastChar() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        Optional<BoxSpace> optAnswer = colorBoxList.stream()
+                .filter(colorBox -> isStartWithWater(colorBox))
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .filter(cont -> cont.getContent().toString().startsWith("Water"))
+                .findAny();
+
+        if (optAnswer.isPresent()) {
+            String answer = optAnswer.get().getContent().toString();
+            String substringFirstChar = answer.substring(answer.length() - 1);
+            System.out.println("+++++++++Answer+++++++++");
+            System.out.println(answer + " : " + substringFirstChar);
+        } else {
+            System.out.println("Error");
+        }
+
     }
 
     // ===================================================================================
@@ -249,7 +340,44 @@ public class Step12StreamStringTest extends PlainTestCase {
      * (カラーボックスに入ってる "o" (おー) を含んだ文字列から "o" を全て除去したら何文字？)
      */
     public void test_replace_remove_o() {
+
+        // TODO yuki.komatsu
+        //  ぬるぽ…
+        //  (2019-06-06)
+
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        String target = "o";
+        Optional<Integer> optAnswer = colorBoxList.stream()
+                //                .filter(colorBox -> isContain(colorBox,target))
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .filter(boxSpace -> boxSpace.getContent().toString().contains(target))
+                .map(boxSpace -> boxSpace.getContent().toString().replace(target, ""))
+                .map(str -> str.length())
+                .findAny();
+
+        if (optAnswer.isPresent()) {
+            Integer answer = optAnswer.get();
+//            String substringFirstChar = answer.substring(answer.length() - 1);
+            System.out.println("+++++++++Answer+++++++++");
+            System.out.println(answer + " : " + answer);
+        } else {
+            System.out.println("Error");
+        }
+
     }
+//    private boolean isContain(ColorBox colorBox, char target) {
+//        int firstTarget;
+//        List<BoxSpace> spaceList = colorBox.getSpaceList();
+//        for (BoxSpace boxSpace : spaceList) {
+//            if (boxSpace.getContent() instanceof String) {
+//                firstTarget = boxSpace.getContent().toString().indexOf(target);
+//                if (firstTarget >= 0){
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * What string is path string of java.io.File in color-boxes, which is replaced with "/" to Windows file separator? <br>
