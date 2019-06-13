@@ -15,17 +15,37 @@
  */
 package org.docksidestage.javatry.colorbox;
 
-import javax.annotation.security.PermitAll;
+import java.util.List;
 
+import org.docksidestage.bizfw.colorbox.ColorBox;
+import org.docksidestage.bizfw.colorbox.space.BoxSpace;
+import org.docksidestage.bizfw.colorbox.yours.YourPrivateRoom;
 import org.docksidestage.unit.PlainTestCase;
 
 /**
  * The test of Number with color-box. <br>
  * Show answer by log() for question of javadoc.
  * @author jflute
- * @author your_name_here
+ * @author yukikoma
  */
-public class  Step13NumberTest extends PlainTestCase {
+public class Step13NumberTest extends PlainTestCase {
+
+    // ===================================================================================
+    //                                                                        Small Helper
+    //                                                                        ============
+    private boolean withinRange(BoxSpace boxSpace) {
+        int contentVal;
+        if (boxSpace.getContent() instanceof Integer) {
+            contentVal = (int) boxSpace.getContent();
+        } else {
+            try{
+                contentVal = Integer.parseInt(boxSpace.getContent().toString());
+            }catch (Exception e){
+                return false;
+            }
+        }
+        return 0 <= contentVal && contentVal <= 54;
+    }
 
     // ===================================================================================
     //                                                                               Basic
@@ -35,6 +55,17 @@ public class  Step13NumberTest extends PlainTestCase {
      * (カラーボックの中に入っているInteger型で、0から54までの値は何個ある？)
      */
     public void test_countZeroToFiftyFour_IntegerOnly() {
+        // TODO yuki.komatsu 合計じゃない… (2019-06-13)
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+
+        int sum = colorBoxList.stream()
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .filter(boxSpace -> boxSpace.getContent() instanceof Integer)
+                .filter(boxSpace -> withinRange(boxSpace))
+                .mapToInt(boxSpace -> (int) boxSpace.getContent())
+                .sum();
+        System.out.println(sum);
+
     }
 
     /**
@@ -42,6 +73,16 @@ public class  Step13NumberTest extends PlainTestCase {
      * (カラーボックの中に入っている数値で、0から54までの値は何個ある？)
      */
     public void test_countZeroToFiftyFour_Number() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        // TODO yuki.komatsu 数字を合計してしまっていた、intだけじゃないのにむししてた。 (2019-06-13)
+        int sum = colorBoxList.stream()
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .peek(boxSpace -> System.out.println(boxSpace))
+                .filter(boxSpace -> boxSpace.getContent() instanceof Integer || boxSpace.getContent() instanceof String)
+                .filter(boxSpace -> withinRange(boxSpace))
+                .mapToInt(boxSpace -> (int) boxSpace.getContent())
+                .sum();
+        System.out.println(sum);
     }
 
     /**

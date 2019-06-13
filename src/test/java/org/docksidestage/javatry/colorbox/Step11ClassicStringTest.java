@@ -513,28 +513,26 @@ public class Step11ClassicStringTest extends PlainTestCase {
      * (カラーボックスの中に入っている java.util.Map を "map:{ key = value ; key = map:{ key = value ; ... } ; ... }" という形式で表示すると？)
      */
     public void test_showMap_nested() {
-        // TODO yuki.komatsu これやり直す// (2019-06-13)
-        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
-        ArrayList<String> mapStringList = new ArrayList<>();
-        StringBuilder resultString = null;
-
-        for (ColorBox colorBox : colorBoxList) {
-            List<BoxSpace> spaceList = colorBox.getSpaceList();
-            for (BoxSpace boxSpace : spaceList) {
-                Object content = boxSpace.getContent();
-                if (content instanceof Map){
-                    Set<Map.Entry<Object, Object>> entries = ((Map<Object, Object>) content).entrySet();
-                    for (Map.Entry<Object, Object> entry : entries) {
-                        resultString.append(convertToMapStringResouse(Map<Object,Object> content));
-                        resultString.append(addMapStringMark(resultString));
-//                        forの外側で;をトリムしてもおk
-                    }
-
-                }
-            }
-        }
-
-
+//        // TODO yuki.komatsu これやり直す// (2019-06-13)
+//        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+//        ArrayList<String> mapStringList = new ArrayList<>();
+//        StringBuilder resultString = null;
+//
+//        for (ColorBox colorBox : colorBoxList) {
+//            List<BoxSpace> spaceList = colorBox.getSpaceList();
+//            for (BoxSpace boxSpace : spaceList) {
+//                Object content = boxSpace.getContent();
+//                if (content instanceof Map){
+//                    Set<Map.Entry<Object, Object>> entries = ((Map<Object, Object>) content).entrySet();
+//                    for (Map.Entry<Object, Object> entry : entries) {
+//                        resultString.append(convertToMapStringResouse(Map<Object,Object> content));
+//                        resultString.append(addMapStringMark(resultString));
+////                        forの外側で;をトリムしてもおk
+//                    }
+//
+//                }
+//            }
+//        }
     }
 
     // ===================================================================================

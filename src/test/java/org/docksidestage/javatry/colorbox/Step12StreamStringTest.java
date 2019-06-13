@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * The test of String with color-box, using Stream API you can. <br>
  * Show answer by log() for question of javadoc.
  * @author jflute
- * @author your_name_here
+ * @author yukikoma
  */
 public class Step12StreamStringTest extends PlainTestCase {
 
