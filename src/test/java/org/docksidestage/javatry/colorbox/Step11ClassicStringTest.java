@@ -18,8 +18,10 @@ package org.docksidestage.javatry.colorbox;
 import static org.docksidestage.bizfw.colorbox.yours.YourPrivateRoom.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.lang.model.type.NullType;
 
@@ -396,12 +398,12 @@ public class Step11ClassicStringTest extends PlainTestCase {
                         if (((DevilBox) tmpContent).getText() != null) {
                             devilText = ((DevilBox) tmpContent).getText();
                         }
-                    }catch (DevilBoxTextNotFoundException ignored){
+                    } catch (DevilBoxTextNotFoundException ignored) {
 
                     }
-                    if (!devilText.equals("")){
+                    if (!devilText.equals("")) {
                         sumTextLength += devilText.length();
-                        matchCount +=1;
+                        matchCount += 1;
                     }
                 }
                 //                if (boxSpace instanceof DevilBox)
@@ -421,12 +423,11 @@ public class Step11ClassicStringTest extends PlainTestCase {
         //
         //            }
 
-        if (matchCount == 0){
+        if (matchCount == 0) {
             log("Nothing to match");
-        }else {
-            log("Sum is {}",sumTextLength);
+        } else {
+            log("Sum is {}", sumTextLength);
         }
-
 
     }
 
@@ -438,23 +439,73 @@ public class Step11ClassicStringTest extends PlainTestCase {
      * (カラーボックスの中に入っている java.util.Map を "map:{ key = value ; key = value ; ... }" という形式で表示すると？)
      */
     public void test_showMap_flat() {
+        // TODO yuki.komatsu 後で整理する。 (2019-06-13)
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
-        List<String> keys = null;
+        List<String> keys = new ArrayList<String>();
         for (ColorBox colorBox : colorBoxList) {
             List<BoxSpace> spaceList = colorBox.getSpaceList();
             for (BoxSpace boxSpace : spaceList) {
-                if (boxSpace.getContent() instanceof java.util.Map) {
-//                    ((Map) boxSpace.getContent()).keySet().forEach(key -> keys.add(key));
-                    for (Object key : ((Map) boxSpace.getContent()).keySet()) {
-                        keys.add(key.toString());
+                Object content = boxSpace.getContent();
+//                if (content instanceof java.util.Map)
+//                    log("map" + content.toString().replace(",",":"));
+//                toString is for human to read/ debug
+//                業務でtoStringに依存したロジックをかくと、予期しないシステムエラーが発生する可能性がある。
+                if (content instanceof Map) {
+
+//                    for (Object key : ((Map) content).keySet()) {
+//                        keys.add(key.toString());
+//                        System.out.println(key);
+//                        System.out.println(keys);
+//                    }
+
+                    //                    System.out.println("ok");
+                    //                    System.out.println(content);
+
+                    //                    Set<Map.Entry<Object, Object>> entries = ((Map<Object, Object>) content).entrySet();
+                    //                    for (Map.Entry<Object, Object> entry : entries) {
+                    //                        entry.getKey();
+                    //                        entry.getValue();
+                    //
+                    //                    }
+                    //                    StringBuilder ミューダブル？
+                    //                    普通のストリングだと毎回新しい文字列が生成される。いミューダブル
+                    //                    StringBuilder string = new StringBuilder();
+                    //                    string.append("haaaaai");
+                    //                    string.append("heheieheie");
+                    //                    System.out.println(string);
+                    //                    ((Map<Object, Object>) content).forEach();
+                    //                    Set keySet = ((Map) content).keySet();
+                    //                    System.out.println(keySet);
+                    //                  //keyで検索しに行っているのでちょっと遅くなる。負荷がかかる。
+                    //中間生成物がたくさんできる。
+
+                    Map map = (Map) content;
+
+                    for (Object key : ((Map) content).keySet()) {
+                        System.out.println(key + ":" + map.get(key));
                     }
-                    for (String key : keys) {
-                        System.out.println(key + ":" + ((Map) boxSpace.getContent()).get(key));
-                    }
+
+
+
+                    //                    {1-Day Passport=7400, Starlight Passport=5400, After 6 Passport=4200, 2-Day Passport=13200, 3-Day Magic Passport=17800, 4-Day Magic Passport=22400, Land Annual Passport=61000, Sea Annual Passport=61000, Group Passport=6700}
+                    //[1-Day Passport, Starlight Passport, After 6 Passport, 2-Day Passport, 3-Day Magic Passport, 4-Day Magic Passport, Land Annual Passport, Sea Annual Passport, Group Passport]
+                    //                    ok
+                    //                    {sea={dockside=[over, table, hello], hanger=[mystic, shadow, mirage], harbor={spring=fashion, summer=pirates, autumn=vi, winter=jazz}}, land={orleans=[oh, party], showbase=[oneman]}}
+                    //[sea, land]
+                    //                    ok
+                    //                    {Small Coin Locker=300, Resort Line=250, Cinema Piari=1800, Middle Coin Locker=4O0}
+                    //[Small Coin Locker, Resort Line, Cinema Piari, Middle Coin Locker]
+
+                    ////                    ((Map) boxSpace.getContent()).keySet().forEach(key -> keys.add(key));
+                    //                    for (Object key : ((Map) content).keySet()) {
+                    //                        keys.add(key.toString());
+                    //                    }
+                    //                    for (String key : keys) {
+                    //                        System.out.println(key + ":" + ((Map) boxSpace.getContent()).get(key));
+                    //                    }
                 }
             }
         }
-        System.out.println("+++++++++Answer+++++++++");
     }
 
     /**
@@ -462,8 +513,28 @@ public class Step11ClassicStringTest extends PlainTestCase {
      * (カラーボックスの中に入っている java.util.Map を "map:{ key = value ; key = map:{ key = value ; ... } ; ... }" という形式で表示すると？)
      */
     public void test_showMap_nested() {
+        // TODO yuki.komatsu これやり直す// (2019-06-13)
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
-        // TODO yuki.komatsu  (2019-05-30)
+        ArrayList<String> mapStringList = new ArrayList<>();
+        StringBuilder resultString = null;
+
+        for (ColorBox colorBox : colorBoxList) {
+            List<BoxSpace> spaceList = colorBox.getSpaceList();
+            for (BoxSpace boxSpace : spaceList) {
+                Object content = boxSpace.getContent();
+                if (content instanceof Map){
+                    Set<Map.Entry<Object, Object>> entries = ((Map<Object, Object>) content).entrySet();
+                    for (Map.Entry<Object, Object> entry : entries) {
+                        resultString.append(convertToMapStringResouse(Map<Object,Object> content));
+                        resultString.append(addMapStringMark(resultString));
+//                        forの外側で;をトリムしてもおk
+                    }
+
+                }
+            }
+        }
+
+
     }
 
     // ===================================================================================

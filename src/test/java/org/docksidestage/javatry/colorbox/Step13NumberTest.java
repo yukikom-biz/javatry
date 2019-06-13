@@ -15,6 +15,8 @@
  */
 package org.docksidestage.javatry.colorbox;
 
+import javax.annotation.security.PermitAll;
+
 import org.docksidestage.unit.PlainTestCase;
 
 /**
@@ -54,6 +56,7 @@ public class  Step13NumberTest extends PlainTestCase {
      * (カラーボックスの中に入ってる List の中の BigDecimal を全て足し合わせると？)
      */
     public void test_sumBigDecimalInList() {
+        // TODO yuki.komatsu 次回レビュー必ずあるやつ。終わらせなければ。 (2019-06-13)
     }
 
     // ===================================================================================
@@ -73,3 +76,5 @@ public class  Step13NumberTest extends PlainTestCase {
     public void test_sumMapNumberValue() {
     }
 }
+
+

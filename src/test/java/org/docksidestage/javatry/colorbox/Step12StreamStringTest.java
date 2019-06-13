@@ -15,6 +15,8 @@
  */
 package org.docksidestage.javatry.colorbox;
 
+import java.io.File;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,8 @@ import org.docksidestage.bizfw.colorbox.ColorBox;
 import org.docksidestage.bizfw.colorbox.space.BoxSpace;
 import org.docksidestage.bizfw.colorbox.yours.YourPrivateRoom;
 import org.docksidestage.unit.PlainTestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The test of String with color-box, using Stream API you can. <br>
@@ -246,7 +250,15 @@ public class Step12StreamStringTest extends PlainTestCase {
         } else {
             System.out.println("Error");
         }
+
+//        optAnswer.ifPresent(ans -> {
+//            log(ans);
+//        });
+
+
     }
+
+
 
     /**
      * What number character is starting with the late "ど" of string containing plural "ど"s in color-boxes? (e.g. "どんどん" => 3) <br>
@@ -341,15 +353,11 @@ public class Step12StreamStringTest extends PlainTestCase {
      */
     public void test_replace_remove_o() {
 
-        // TODO yuki.komatsu
-        //  ぬるぽ…
-        //  (2019-06-06)
-
         List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
         String target = "o";
         Optional<Integer> optAnswer = colorBoxList.stream()
-                //                .filter(colorBox -> isContain(colorBox,target))
                 .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .filter(boxSpace -> boxSpace.getContent() instanceof String)
                 .filter(boxSpace -> boxSpace.getContent().toString().contains(target))
                 .map(boxSpace -> boxSpace.getContent().toString().replace(target, ""))
                 .map(str -> str.length())
@@ -357,9 +365,8 @@ public class Step12StreamStringTest extends PlainTestCase {
 
         if (optAnswer.isPresent()) {
             Integer answer = optAnswer.get();
-//            String substringFirstChar = answer.substring(answer.length() - 1);
             System.out.println("+++++++++Answer+++++++++");
-            System.out.println(answer + " : " + answer);
+            System.out.println("Answer is : " + answer);
         } else {
             System.out.println("Error");
         }
@@ -384,6 +391,19 @@ public class Step12StreamStringTest extends PlainTestCase {
      * カラーボックスに入ってる java.io.File のパス文字列のファイルセパレーターの "/" を、Windowsのファイルセパレーターに置き換えた文字列は？
      */
     public void test_replace_fileseparator() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        String macSeparater = "/";
+        String windowsSeparater = "\\";
+        Optional<String> optFileSrting = colorBoxList.stream()
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+//                .peek(boxSpace -> log(boxSpace))
+                .filter(boxSpace -> boxSpace.getContent() instanceof File)
+                .map(boxSpace -> ((File) boxSpace.getContent()).getPath().replace(macSeparater, windowsSeparater))
+                .findAny();
+
+        optFileSrting.ifPresent(str -> {
+            System.out.println(str);
+        });
     }
 
     // ===================================================================================
@@ -394,6 +414,30 @@ public class Step12StreamStringTest extends PlainTestCase {
      * (カラーボックスの中に入っているDevilBoxクラスのtextの長さの合計は？)
      */
     public void test_welcomeToDevil() {
+        List<ColorBox> colorBoxList = new YourPrivateRoom().getColorBoxList();
+        int sumTextLength = colorBoxList.stream()
+                .flatMap(colorBox -> colorBox.getSpaceList().stream())
+                .filter(boxSpace -> boxSpace.getContent() instanceof YourPrivateRoom.DevilBox)
+                .peek(boxSpace -> {
+                    YourPrivateRoom.DevilBox contentDevilBox = (YourPrivateRoom.DevilBox) boxSpace.getContent();
+                    contentDevilBox.wakeUp();
+                    contentDevilBox.allowMe();
+                    contentDevilBox.open();
+                })
+                .filter(boxSpace -> boxSpace.getContent() != null)
+                .filter(boxSpace -> hasText(boxSpace))
+                .mapToInt(boxSpace -> boxSpace.getContent().toString().length())
+                .sum();
+        log("sum is : " + sumTextLength);
+    }
+    private boolean hasText(BoxSpace boxSpace) {
+        try {
+            ((YourPrivateRoom.DevilBox) boxSpace.getContent()).getText();
+            return true;
+        }catch (YourPrivateRoom.DevilBoxTextNotFoundException e){
+            System.out.println(e);
+            return false;
+        }
     }
 
     // ===================================================================================
@@ -404,6 +448,7 @@ public class Step12StreamStringTest extends PlainTestCase {
      * (カラーボックスの中に入っている java.util.Map を "map:{ key = value ; key = value ; ... }" という形式で表示すると？)
      */
     public void test_showMap_flat() {
+        // TODO yuki.komatsu 次回ここから (2019-06-13)
     }
 
     /**
